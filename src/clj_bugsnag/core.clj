@@ -21,7 +21,7 @@
                :exceptions [{:errorClass (:class ex)
                              :message (:message ex)
                              :stacktrace (transform-stacktrace (:trace-elems ex))}]
-               :groupingHash (:group data)
+               :groupingHash (or (:group data) (:class ex))
                :severity (or (:severity data) "error")
                :app {:version (:out (sh "git" "rev-parse" "HEAD"))
                      :releaseStage (or (:environment data) "production")}
