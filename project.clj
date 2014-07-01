@@ -1,4 +1,4 @@
-(defproject clj-bugsnag "0.1.1"
+(defproject clj-bugsnag "0.1.2"
   :description "Bugsnag client"
   :url "http://github.com/6wunderkinder/clj-bugsnag"
   :min-lein-version "2.3.3"
