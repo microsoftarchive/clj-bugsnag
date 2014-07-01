@@ -1,31 +1,38 @@
-(ns clj-bugsnag.core)
+(ns clj-bugsnag.core
+  (:require [clj-stacktrace.core :refer [parse-exception]]
+            [clojure.java.shell :refer [sh]]
+            [org.httpkit.client :as http]
+            [clojure.data.json :as json]))
+
+(defn transform-stacktrace
+  [trace-elems]
+  (vec (cons :backtrace
+         (for [{:keys [file line method]} trace-elems]
+           [:line {:file file :lineNumber line :method method}]))))
+
+(defn post-data
+  [exception data]
+  (let [ex (parse-exception exception)]
+    {:apiKey (:api-key data)
+     :notifier {:name "clj-bugsnag"
+                :version "0.1.0"
+                :url "http://github.com/6wunderkinder/clj-bugsnag"}
+     :events [{:payloadVersion "2"
+               :exceptions [{:errorClass (:class ex)
+                             :message (:message ex)
+                             :stacktrace (transform-stacktrace (:trace-elems ex))}]
+               :groupingHash (:group data)
+               :severity (or (:severity data) "error")
+               :app {:version (:out (sh "git" "rev-parse" "HEAD"))
+                     :releaseStage (or (:environment data) "production")}
+               :device {:hostname (.. java.net.InetAddress getLocalHost getHostName)}
+               :metaData (or (:meta data) [])}]}))
+
 
 (defn notify
   [exception data]
-  (let [params {:apiKey ""
-                :notifier {:name "clj-bugsnag"
-                           :version "0.1.0"
-                           :url "http://github.com/6wunderkinder/clj-bugsnag"}
-                :event {:payloadVersion "2"
-                        :exceptions [{:errorClass ""
-                                      :message ""
-                                      :stacktrace [{:file ""
-                                                    :lineNumber 1
-                                                    :columnNumber 1
-                                                    :method ""
-                                                    :inProject true}]}]
-                        :context ""
-                        :groupingHash ""
-                        :severity "error"
-                        :user {:id 1
-                               :name ""
-                               :email ""}
-                        :app {:version ""
-                              :releaseStage "production"}
-                        :device {:osVersion ""
-                                 :hostname ""}
-                        :metaData {}}
-                }])
-  )
+  (let [params (post-data exception data)]
+    @(http/post "https://notify.bugsnag.com/" (json/write-str params))
 
-(foo "Ben")
+
+    ))
