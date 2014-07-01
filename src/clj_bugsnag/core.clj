@@ -18,7 +18,7 @@
                 :version "0.1.0"
                 :url "http://github.com/6wunderkinder/clj-bugsnag"}
      :events [{:payloadVersion "2"
-               :exceptions [{:errorClass (:class ex)
+               :exceptions [{:errorClass (.getName (:class ex))
                              :message (:message ex)
                              :stacktrace (transform-stacktrace (:trace-elems ex))}]
                :groupingHash (or (:group data) (:class ex))
