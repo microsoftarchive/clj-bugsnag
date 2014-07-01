@@ -7,7 +7,7 @@
 (defn transform-stacktrace
   [trace-elems]
   (vec (for [{:keys [file line method]} trace-elems]
-          [:line {:file file :lineNumber line :method method}])))
+          {:file file :lineNumber line :method method})))
 
 (defn post-data
   [exception data]
