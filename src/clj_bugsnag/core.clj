@@ -15,7 +15,10 @@
   [exception data]
   (let [ex (parse-exception exception)
         class-name (.getName (:class ex))
-        project-ns (get data :project-ns "")]
+        project-ns (get data :project-ns "")
+        base-meta (if-let [d (ex-data exception)]
+                    {"ex–data" d}
+                    {})]
     {:apiKey (:api-key data)
      :notifier {:name "clj-bugsnag"
                 :version "0.1.2"
@@ -29,7 +32,7 @@
                :app {:version (clojure.string/trim (:out (sh "git" "rev-parse" "HEAD")))
                      :releaseStage (or (:environment data) "production")}
                :device {:hostname (.. java.net.InetAddress getLocalHost getHostName)}
-               :metaData (or (:meta data) [])}]}))
+               :metaData (merge base-meta (:meta data))}]}))
 
 
 (defn notify
