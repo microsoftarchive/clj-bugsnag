@@ -6,14 +6,16 @@
             [clojure.data.json :as json]))
 
 (defn transform-stacktrace
-  [trace-elems]
-  (vec (for [{:keys [file line] :as elem} trace-elems]
-          {:file file :lineNumber line :method (method-str elem)})))
+  [trace-elems project-ns]
+  (vec (for [{:keys [file line ns] :as elem} trace-elems
+             :let [project? (.startsWith (or ns "_") project-ns)]]
+          {:file file :lineNumber line :method (method-str elem) :inProject project?})))
 
 (defn post-data
   [exception data]
   (let [ex (parse-exception exception)
-        class-name (.getName (:class ex))]
+        class-name (.getName (:class ex))
+        project-ns (get data :project-ns "")]
     {:apiKey (:api-key data)
      :notifier {:name "clj-bugsnag"
                 :version "0.1.2"
@@ -21,7 +23,7 @@
      :events [{:payloadVersion "2"
                :exceptions [{:errorClass class-name
                              :message (:message ex)
-                             :stacktrace (transform-stacktrace (:trace-elems ex))}]
+                             :stacktrace (transform-stacktrace (:trace-elems ex) project-ns)}]
                :groupingHash (or (:group data) class-name)
                :severity (or (:severity data) "error")
                :app {:version (clojure.string/trim (:out (sh "git" "rev-parse" "HEAD")))
