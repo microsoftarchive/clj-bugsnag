@@ -27,7 +27,10 @@
                :exceptions [{:errorClass class-name
                              :message (:message ex)
                              :stacktrace (transform-stacktrace (:trace-elems ex) project-ns)}]
-               :groupingHash (or (:group data) class-name)
+               :groupingHash (or (:group data)
+                               (if (isa? (type exception) clojure.lang.ExceptionInfo)
+                                 (:message ex)
+                                 class-name))
                :severity (or (:severity data) "error")
                :app {:version (clojure.string/trim (:out (sh "git" "rev-parse" "HEAD")))
                      :releaseStage (or (:environment data) "production")}
