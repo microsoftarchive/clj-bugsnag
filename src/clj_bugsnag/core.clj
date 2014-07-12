@@ -1,13 +1,14 @@
 (ns clj-bugsnag.core
   (:require [clj-stacktrace.core :refer [parse-exception]]
+            [clj-stacktrace.repl :refer [method-str]]
             [clojure.java.shell :refer [sh]]
             [clj-http.client :as http]
             [clojure.data.json :as json]))
 
 (defn transform-stacktrace
   [trace-elems]
-  (vec (for [{:keys [file line method]} trace-elems]
-          {:file file :lineNumber line :method method})))
+  (vec (for [{:keys [file line] :as elem} trace-elems]
+          {:file file :lineNumber line :method (method-str elem)})))
 
 (defn post-data
   [exception data]
