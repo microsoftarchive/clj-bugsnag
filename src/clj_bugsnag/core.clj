@@ -27,6 +27,7 @@
                :exceptions [{:errorClass class-name
                              :message (:message ex)
                              :stacktrace (transform-stacktrace (:trace-elems ex) project-ns)}]
+               :context (:context data)
                :groupingHash (or (:group data)
                                (if (isa? (type exception) clojure.lang.ExceptionInfo)
                                  (:message ex)
