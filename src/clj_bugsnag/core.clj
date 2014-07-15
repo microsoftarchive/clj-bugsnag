@@ -15,7 +15,7 @@
   [exception data]
   (let [ex (parse-exception exception)
         class-name (.getName (:class ex))
-        project-ns (get data :project-ns "")
+        project-ns (or (:project-ns data) "")
         base-meta (if-let [d (ex-data exception)]
                     {"ex–data" d}
                     {})]
