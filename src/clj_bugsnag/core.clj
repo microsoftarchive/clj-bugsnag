@@ -43,7 +43,7 @@
                :app {:version (clojure.string/trim (:out (sh "git" "rev-parse" "HEAD")))
                      :releaseStage (or (:environment data) "production")}
                :device {:hostname (.. java.net.InetAddress getLocalHost getHostName)}
-               :metaData (or (walk/postwalk stringify (:meta data)) [])}]}))
+               :metaData (walk/postwalk stringify (merge base-meta (:meta data)))}]}))
 
 
 (defn notify
