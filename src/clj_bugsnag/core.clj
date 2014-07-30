@@ -3,13 +3,20 @@
             [clj-stacktrace.repl :refer [method-str]]
             [clojure.java.shell :refer [sh]]
             [clj-http.client :as http]
-            [clojure.data.json :as json]))
+            [clojure.data.json :as json]
+            [clojure.walk :as walk]))
 
 (defn transform-stacktrace
   [trace-elems project-ns]
   (vec (for [{:keys [file line ns] :as elem} trace-elems
              :let [project? (.startsWith (or ns "_") project-ns)]]
           {:file file :lineNumber line :method (method-str elem) :inProject project?})))
+
+(defn stringify
+  [thing]
+  (if (or (map? thing) (string? thing) (number? thing) (sequential? thing))
+    thing
+    (str thing)))
 
 (defn post-data
   [exception data]
@@ -36,7 +43,7 @@
                :app {:version (clojure.string/trim (:out (sh "git" "rev-parse" "HEAD")))
                      :releaseStage (or (:environment data) "production")}
                :device {:hostname (.. java.net.InetAddress getLocalHost getHostName)}
-               :metaData (merge base-meta (:meta data))}]}))
+               :metaData (or (walk/postwalk stringify (:meta data)) [])}]}))
 
 
 (defn notify
