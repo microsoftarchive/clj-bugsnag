@@ -15,5 +15,5 @@
                                " "
                                (:uri req))]
             (core/notify ex (merge {:context verb-path
-                                    :user (user-fn req)} req-data))
+                                    :user (try (user-fn req) (catch Throwable e nil))} req-data))
             (throw ex)))))))
