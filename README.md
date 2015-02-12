@@ -9,8 +9,9 @@ A fully fledged Bugsnag client for Clojure.
 
  - Automatically exposes ex-info data as metadata
  - Ring middleware included, attaches ring request map as metadata
+ - Include code snippet of the source at crash site
  - Mark project stack traces
- - Used in production at [6 Wunderkinder](http://www.6wunderkinder.com/)
+ - Tested, used in production at [6 Wunderkinder](http://www.6wunderkinder.com/)
 
 
 ## Releases and Dependency Information
