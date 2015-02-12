@@ -17,12 +17,12 @@ A fully fledged Bugsnag client for Clojure.
 
 ## Releases and Dependency Information
 
-clj-bugsnag is released via [Clojars](https://clojars.org/clj-bugsnag). The Latest stable release is 0.1.2
+clj-bugsnag is released via [Clojars](https://clojars.org/clj-bugsnag). The Latest stable release is 0.2.0
 
 [Leiningen](https://github.com/technomancy/leiningen) dependency information:
 
 ```clojure
-[clj-bugsnag "0.1.2"]
+[clj-bugsnag "0.2.0"]
 ```
 
 Maven dependency information:
@@ -31,7 +31,7 @@ Maven dependency information:
 <dependency>
   <groupId>clj-bugsnag</groupId>
   <artifactId>clj-bugsnag</artifactId>
-  <version>0.1.2</version>
+  <version>0.2.0</version>
 </dependency>
 ```
 
