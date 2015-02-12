@@ -47,12 +47,12 @@ Maven dependency information:
 
 ;; Manual reporting:
 (try
-  (some-function-that-could-crash)
+  (some-function-that-could-crash some-input)
   (catch Exception ex
     (bugsnag/notify ex
       {:api-key "Project API key"
-       :environment "dev"
-       :project-ns project-ns})
+       ;; Attach custom metadata to create tabs in Bugsnag:
+       :meta {:input some-input}})
 ```
 
 
