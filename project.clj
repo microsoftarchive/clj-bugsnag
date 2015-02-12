@@ -7,8 +7,11 @@
   :dependencies [
     [clj-stacktrace "0.2.7"]
     [clj-http "0.9.2"]
+    [environ "0.2.1"]
     [org.clojure/data.json "0.2.4"]
     [org.clojure/clojure "1.6.0"]]
+  :aliases {
+    "test" ["midje"]}
   :profiles {
     :dev {
       :dependencies [[midje "1.6.3"]]

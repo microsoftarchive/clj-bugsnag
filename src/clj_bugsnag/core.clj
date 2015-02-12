@@ -3,6 +3,7 @@
             [clj-stacktrace.repl :refer [method-str]]
             [clojure.java.shell :refer [sh]]
             [clj-http.client :as http]
+            [environ.core :refer [env]]
             [clojure.data.json :as json]
             [clojure.repl :as repl]
             [clojure.string :as string]
@@ -49,7 +50,7 @@
         base-meta (if-let [d (ex-data exception)]
                     {"ex–data" d}
                     {})]
-    {:apiKey (:api-key data)
+    {:apiKey (:api-key data (env :bugsnag-key))
      :notifier {:name "clj-bugsnag"
                 :version "0.1.2"
                 :url "https://github.com/6wunderkinder/clj-bugsnag"}
@@ -72,8 +73,13 @@
 
 
 (defn notify
-  [exception data]
-  (let [params (post-data exception data)
-        url "https://notify.bugsnag.com/"]
-    (http/post url {:form-params params
-                    :content-type :json})))
+  "Main interface for manually reporting exceptions.
+   When not :api-key is provided in options,
+   tries to load BUGSNAG_KEY var from enviroment."
+  ([exception]
+    (notify exception nil))
+  ([exception, options]
+    (let [params (post-data exception options)
+          url "https://notify.bugsnag.com/"]
+      (http/post url {:form-params params
+                      :content-type :json}))))

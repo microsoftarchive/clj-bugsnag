@@ -51,11 +51,15 @@ Maven dependency information:
 ;; Manual reporting:
 (try
   (some-function-that-could-crash some-input)
-  (catch Exception ex
-    (bugsnag/notify ex
+  (catch Exception exception
+    (bugsnag/notify exception
       {:api-key "Project API key"
        ;; Attach custom metadata to create tabs in Bugsnag:
        :meta {:input some-input}})
+    
+    ;; If no api-key is provided, clj-bugsnag
+    ;; will fall back to BUGSNAG_KEY environment variable
+    (bugsnag/notify exception)))
 ```
 
 
