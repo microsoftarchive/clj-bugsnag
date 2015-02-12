@@ -1,5 +1,5 @@
 (ns clj-bugsnag.ring
-  (require [clj-bugsnag.core :as core]))
+  (:require [clj-bugsnag.core :as core]))
 
 (defn wrap-bugsnag
   [handler-fn data]

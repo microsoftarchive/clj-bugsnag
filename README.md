@@ -1,14 +1,63 @@
+
+
 # clj-bugsnag
 
-A Clojure library designed to ... well, that part is up to you.
+A fully fledged Bugsnag client for Clojure.
 
-## Usage
 
-FIXME
+## Features
+
+ - Automatically exposes ex-info data as metadata
+ - Ring middleware included, attaches ring request map as metadata
+ - Mark project stack traces
+ - Used in production at [6 Wunderkinder](http://www.6wunderkinder.com/)
+
+
+## Releases and Dependency Information
+
+clj-bugsnag is released via [Clojars](https://clojars.org/clj-bugsnag). The Latest stable release is 0.1.2
+
+[Leiningen](https://github.com/technomancy/leiningen) dependency information:
+
+```clojure
+[clj-bugsnag "0.1.2"]
+```
+
+Maven dependency information:
+
+```xml
+<dependency>
+  <groupId>clj-bugsnag</groupId>
+  <artifactId>clj-bugsnag</artifactId>
+  <version>0.1.2</version>
+</dependency>
+```
+
+
+## Example Usage
+
+```clojure
+(require '[clj-bugsnag.core :as bugsnag]
+         '[clj-bugsnag.ring :as bugsnag.ring])
+
+;; Ring middleware:
+(bugsnag.ring/wrap-bugsnag handler {:api-key "Project API key"
+                                    :environment "production"
+                                    :project-ns "your-project-ns-prefix"})
+
+;; Manual reporting:
+(try
+  (some-function-that-could-crash)
+  (catch Exception ex
+    (bugsnag/notify ex
+      {:api-key "Project API key"
+       :environment "dev"
+       :project-ns project-ns})
+```
+
 
 ## License
 
-Copyright © 2014 FIXME
+Copyright © 2014-2015 6 Wunderkinder GmbH.
 
-Distributed under the Eclipse Public License either version 1.0 or (at
-your option) any later version.
+Distributed under the [Eclipse Public License](http://www.eclipse.org/legal/epl-v10.html), the same as Clojure.

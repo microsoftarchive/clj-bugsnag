@@ -29,7 +29,7 @@
     {:apiKey (:api-key data)
      :notifier {:name "clj-bugsnag"
                 :version "0.1.2"
-                :url "http://github.com/bscofield/clj-bugsnag"}
+                :url "http://github.com/6wunderkinder/clj-bugsnag"}
      :events [{:payloadVersion "2"
                :exceptions [{:errorClass class-name
                              :message (:message ex)
