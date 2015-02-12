@@ -64,6 +64,7 @@
                                  (:message ex)
                                  class-name))
                :severity (or (:severity data) "error")
+               :user (:user data)
                :app {:version (string/trim (:out (sh "git" "rev-parse" "HEAD")))
                      :releaseStage (or (:environment data) "production")}
                :device {:hostname (.. java.net.InetAddress getLocalHost getHostName)}

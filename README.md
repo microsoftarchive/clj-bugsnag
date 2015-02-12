@@ -11,6 +11,7 @@ A fully fledged Bugsnag client for Clojure.
  - Ring middleware included, attaches ring request map as metadata
  - Include code snippet of the source at crash site
  - Mark project stack traces
+ - Middleware and notify function support passing along user-ids to Bugsnag
  - Tested, used in production at [6 Wunderkinder](http://www.6wunderkinder.com/)
 
 
@@ -43,8 +44,9 @@ Maven dependency information:
 
 ;; Ring middleware:
 (bugsnag.ring/wrap-bugsnag handler {:api-key "Project API key"
-                                    :environment "production"
-                                    :project-ns "your-project-ns-prefix"})
+                                    :environment "production, optional"
+                                    :project-ns "your-project-ns-prefix, optional"
+                                    :user-from-request (constantly "optional function")})
 
 ;; Manual reporting:
 (try
