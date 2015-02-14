@@ -1,6 +1,6 @@
 
 
-# clj-bugsnag
+# clj-bugsnag [![Build Status](https://travis-ci.org/6wunderkinder/clj-bugsnag.svg)](https://travis-ci.org/6wunderkinder/clj-bugsnag)
 
 A fully fledged [Bugsnag](https://bugsnag.com) exception reporting client for Clojure.
 
