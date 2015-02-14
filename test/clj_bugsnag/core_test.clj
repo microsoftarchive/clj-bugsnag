@@ -15,26 +15,32 @@
 
 (defn make-crash
   "A function that will crash"
-  ;; A comment for padding
   []
-  (.crash nil)
+  (let [closure (fn []
+                  (.crash nil))]
+
   ;;    
-
   ;; /end to check for 3 lines before and after
-  )
 
-(fact "includes source code of crash-site"
+    (closure)))
+
+(fact "includes source in stack traces"
   (try
     (make-crash)
     (catch Exception ex
-      (-> (core/post-data ex nil) :events first :exceptions first :code)
+      (-> (core/post-data ex nil) :events first :exceptions first :stacktrace second :code)
       => {17 "  \"A function that will crash\""
-          18 "  ;; A comment for padding"
-          19 "  []"
-          20 "  (.crash nil)"
-          21 "  ;;"
-          22 ""
-          23 "  ;; /end to check for 3 lines before and after"})))
+          18 "  []"
+          19 "  (let [closure (fn []"
+          20 "                  (.crash nil))]"
+          21 ""
+          22 "  ;;"
+          23 "  ;; /end to check for 3 lines before and after"}
+      (-> (core/post-data ex nil) :events first :exceptions first :stacktrace (nth 2) :code)
+      => {22 "  ;;"
+          23 "  ;; /end to check for 3 lines before and after"
+          24 ""
+          25 "    (closure)))"})))
 
 (fact "falls back to BUGSNAG_KEY environment var for :apiKey"
   (-> (core/post-data (ex-info "BOOM" {}) {}) :apiKey) => ..bugsnag-key..

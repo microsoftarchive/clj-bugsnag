@@ -9,37 +9,38 @@
             [clojure.string :as string]
             [clojure.walk :as walk]))
 
+(defn- find-source-snippet
+  [around, function-name]
+  (try
+    (let [fn-sym (symbol function-name)
+          fn-var (find-var fn-sym)
+          source (repl/source-fn fn-sym)
+          start (-> fn-var meta :line)
+          indexed-lines (map-indexed (fn [i, line]
+                                        [(+ i start), (string/trimr line)])
+                                     (string/split-lines source))]
+      (into {} (filter #(<= (- around 3) (first %) (+ around 3)) indexed-lines)))
+    (catch Exception ex
+      nil)))
+
 (defn- transform-stacktrace
   [trace-elems project-ns]
   (vec (for [{:keys [file line ns] :as elem} trace-elems
-             :let [project? (.startsWith (or ns "_") project-ns)]]
-          {:file file :lineNumber line :method (method-str elem) :inProject project?})))
+             :let [project? (.startsWith (or ns "_") project-ns)
+                   method (method-str elem)
+                   code (when (.endsWith file ".clj")
+                          (find-source-snippet line (.replace method "[fn]" "")))]]
+          {:file file,
+           :lineNumber line,
+           :method method,
+           :inProject project?,
+           :code code})))
 
 (defn- stringify
   [thing]
   (if (or (map? thing) (string? thing) (number? thing) (sequential? thing))
     thing
     (str thing)))
-
-(defn- find-source-snippet
-  [around, function-name]
-  (let [fn-sym (symbol function-name)
-        fn-var (find-var fn-sym)
-        source (repl/source-fn fn-sym)
-        start (-> fn-var meta :line)
-        indexed-lines (map-indexed (fn [i, line]
-                                      [(+ i start), (string/trimr line)])
-                                   (string/split-lines source))]
-    (into {} (filter #(<= (- around 3) (first %) (+ around 3)) indexed-lines))))
-
-(defn- source-of-crash-site
-  [stacktrace]
-  (try
-    (let [clj-traces (filter #(.endsWith (:file %) ".clj") stacktrace)
-          crash-site (first (concat (filter :inProject clj-traces) clj-traces))]
-      (find-source-snippet (:lineNumber crash-site) (:method crash-site)))
-    (catch Exception ex
-      nil)))
 
 (defn post-data
   [exception data]
@@ -57,8 +58,7 @@
      :events [{:payloadVersion "2"
                :exceptions [{:errorClass class-name
                              :message (:message ex)
-                             :stacktrace stacktrace
-                             :code (source-of-crash-site stacktrace)}]
+                             :stacktrace stacktrace}]
                :context (:context data)
                :groupingHash (or (:group data)
                                (if (isa? (type exception) clojure.lang.ExceptionInfo)
