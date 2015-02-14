@@ -2,16 +2,16 @@
 
 # clj-bugsnag
 
-A fully fledged Bugsnag client for Clojure.
+A fully fledged [Bugsnag](https://bugsnag.com) exception reporting client for Clojure.
 
 
 ## Features
 
  - Automatically exposes ex-info data as metadata
  - Ring middleware included, attaches ring request map as metadata
- - Include code snippet of the source at crash site
- - Mark project stack traces
- - Middleware and notify function support passing along user-ids to Bugsnag
+ - Include snippet of code around stack trace lines
+ - Mark in-project stack traces to hide frameworks
+ - Pass along user IDs to Bugsnag
  - Tested, used in production at [6 Wunderkinder](http://www.6wunderkinder.com/)
 
 
@@ -42,21 +42,34 @@ Maven dependency information:
 (require '[clj-bugsnag.core :as bugsnag]
          '[clj-bugsnag.ring :as bugsnag.ring])
 
-;; Ring middleware:
-(bugsnag.ring/wrap-bugsnag handler {:api-key "Project API key"
-                                    :environment "production, optional"
-                                    :project-ns "your-project-ns-prefix, optional"
-                                    :user-from-request (constantly "optional function")})
+;; Ring middleware, all keys besides :api-key are optional:
 
-;; Manual reporting:
+(bugsnag.ring/wrap-bugsnag
+  handler
+  {:api-key "Project API key"
+   ;; Defaults to "production"
+   :environment "production"
+   ;; Project namespace prefix, used to hide irrelevant stack trace elements
+   :project-ns "your-project-ns-prefix"
+   ;; A optional function to extract a user object from a ring request map
+   ;; Used to count how many users are affected by a crash
+   :user-from-request (constantly {:id "shall return a map"})})
+
+;; Manual reporting using the notify function:
+
 (try
   (some-function-that-could-crash some-input)
   (catch Exception exception
-    (bugsnag/notify exception
+
+    ;; Notify with options map, all keys are optional:
+    (bugsnag/notify
+      exception
       {:api-key "Project API key"
        ;; Attach custom metadata to create tabs in Bugsnag:
-       :meta {:input some-input}})
-    
+       :meta {:input some-input}
+       ;; Pass a user object to Bugsnag for better stats
+       :user {:id ... :email ...}})
+
     ;; If no api-key is provided, clj-bugsnag
     ;; will fall back to BUGSNAG_KEY environment variable
     (bugsnag/notify exception)))
