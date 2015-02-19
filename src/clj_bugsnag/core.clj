@@ -28,8 +28,8 @@
   (vec (for [{:keys [file line ns] :as elem} trace-elems
              :let [project? (.startsWith (or ns "_") project-ns)
                    method (method-str elem)
-                   code (when (.endsWith file ".clj")
-                          (find-source-snippet line (.replace method "[fn]" "")))]]
+                   code (when (.endsWith (or file "") ".clj")
+                          (find-source-snippet line (.replace (or method "") "[fn]" "")))]]
           {:file file,
            :lineNumber line,
            :method method,
