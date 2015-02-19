@@ -1,6 +1,6 @@
 
 
-# clj-bugsnag [![Build Status](https://travis-ci.org/6wunderkinder/clj-bugsnag.svg)](https://travis-ci.org/6wunderkinder/clj-bugsnag)
+# clj-bugsnag [![Build Status](https://travis-ci.org/wunderlist/clj-bugsnag.svg)](https://travis-ci.org/wunderlist/clj-bugsnag)
 
 A fully fledged [Bugsnag](https://bugsnag.com) exception reporting client for Clojure.
 
@@ -12,7 +12,7 @@ A fully fledged [Bugsnag](https://bugsnag.com) exception reporting client for Cl
  - Include snippet of code around stack trace lines
  - Mark in-project stack traces to hide frameworks
  - Pass along user IDs to Bugsnag
- - Tested, used in production at [6 Wunderkinder](http://www.6wunderkinder.com/)
+ - Tested, used in production at [6 Wunderkinder](http://www.6wunderkinder.com/) for [Wunderlist](https://www.wunderlist.com/)
 
 
 ## Releases and Dependency Information
