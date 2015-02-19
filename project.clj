@@ -1,4 +1,4 @@
-(defproject clj-bugsnag "0.2.2-SNAPSHOT"
+(defproject clj-bugsnag "0.2.2"
   :description "Fully fledged Bugsnag client. Supports ex-data and ring middleware."
   :url "https://github.com/6wunderkinder/clj-bugsnag"
   :license {:name "Eclipse Public License"

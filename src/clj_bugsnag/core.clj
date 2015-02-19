@@ -53,7 +53,7 @@
                     {})]
     {:apiKey (:api-key data (env :bugsnag-key))
      :notifier {:name "clj-bugsnag"
-                :version "0.2.2-SNAPSHOT"
+                :version "0.2.2"
                 :url "https://github.com/6wunderkinder/clj-bugsnag"}
      :events [{:payloadVersion "2"
                :exceptions [{:errorClass class-name
