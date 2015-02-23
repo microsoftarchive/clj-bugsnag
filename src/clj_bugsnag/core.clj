@@ -42,16 +42,16 @@
     thing
     (str thing)))
 
-(defn post-data
-  [exception data]
+(defn exception->json
+  [exception options]
   (let [ex (parse-exception exception)
         class-name (.getName (:class ex))
-        project-ns (get data :project-ns "\000")
+        project-ns (get options :project-ns "\000")
         stacktrace (transform-stacktrace (:trace-elems ex) project-ns)
         base-meta (if-let [d (ex-data exception)]
                     {"ex–data" d}
                     {})]
-    {:apiKey (:api-key data (env :bugsnag-key))
+    {:apiKey (:api-key options (env :bugsnag-key))
      :notifier {:name "clj-bugsnag"
                 :version "0.2.2"
                 :url "https://github.com/wunderlist/clj-bugsnag"}
@@ -59,18 +59,17 @@
                :exceptions [{:errorClass class-name
                              :message (:message ex)
                              :stacktrace stacktrace}]
-               :context (:context data)
-               :groupingHash (or (:group data)
+               :context (:context options)
+               :groupingHash (or (:group options)
                                (if (isa? (type exception) clojure.lang.ExceptionInfo)
                                  (:message ex)
                                  class-name))
-               :severity (or (:severity data) "error")
-               :user (:user data)
+               :severity (or (:severity options) "error")
+               :user (:user options)
                :app {:version (string/trim (:out (sh "git" "rev-parse" "HEAD")))
-                     :releaseStage (or (:environment data) "production")}
+                     :releaseStage (or (:environment options) "production")}
                :device {:hostname (.. java.net.InetAddress getLocalHost getHostName)}
-               :metaData (walk/postwalk stringify (merge base-meta (:meta data)))}]}))
-
+               :metaData (walk/postwalk stringify (merge base-meta (:meta options)))}]}))
 
 (defn notify
   "Main interface for manually reporting exceptions.
@@ -79,7 +78,7 @@
   ([exception]
     (notify exception nil))
   ([exception, options]
-    (let [params (post-data exception options)
+    (let [params (exception->json exception options)
           url "https://notify.bugsnag.com/"]
       (http/post url {:form-params params
                       :content-type :json}))))
