@@ -25,16 +25,19 @@
 
 (defn- transform-stacktrace
   [trace-elems project-ns]
-  (vec (for [{:keys [file line ns] :as elem} trace-elems
-             :let [project? (.startsWith (or ns "_") project-ns)
-                   method (method-str elem)
-                   code (when (.endsWith (or file "") ".clj")
-                          (find-source-snippet line (.replace (or method "") "[fn]" "")))]]
-          {:file file,
-           :lineNumber line,
-           :method method,
-           :inProject project?,
-           :code code})))
+  (try
+    (vec (for [{:keys [file line ns] :as elem} trace-elems
+               :let [project? (.startsWith (or ns "_") project-ns)
+                     method (method-str elem)
+                     code (when (.endsWith (or file "") ".clj")
+                            (find-source-snippet line (.replace (or method "") "[fn]" "")))]]
+            {:file file,
+             :lineNumber line,
+             :method method,
+             :inProject project?,
+             :code code}))
+    (catch Exception ex
+      [{:file "clj-bugsnag/core.clj", :lineNumber 1, :code {1 (str ex)}}])))
 
 (defn- stringify
   [thing]
