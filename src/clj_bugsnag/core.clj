@@ -37,7 +37,10 @@
              :inProject project?,
              :code code}))
     (catch Exception ex
-      [{:file "clj-bugsnag/core.clj", :lineNumber 1, :code {1 (str ex)}}])))
+      [{:file "clj-bugsnag/core.clj",
+        :lineNumber 1,
+        :code {1 (str ex)
+               2 "thrown while building stack trace."}}])))
 
 (defn- stringify
   [thing]
