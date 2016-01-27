@@ -1,4 +1,4 @@
-(defproject clj-bugsnag "0.2.3"
+(defproject clj-bugsnag "0.2.4"
   :description "Fully fledged Bugsnag client. Supports ex-data and ring middleware."
   :url "https://github.com/wunderlist/clj-bugsnag"
   :license {:name "Eclipse Public License"
@@ -6,10 +6,23 @@
   :min-lein-version "2.3.0"
   :dependencies [
     [clj-stacktrace "0.2.7"]
-    [clj-http "0.9.2"]
+    [clj-http "1.1.2"]
     [environ "0.2.1"]
     [org.clojure/data.json "0.2.4"]
     [org.clojure/clojure "1.6.0"]]
+
+  :repositories [
+    ["releases"
+     {:url "https://artifactory.wunderlist.io/artifactory/libs-release-local"
+      :username :env/artifactory_user
+      :password :env/artifactory_password
+      :sign-releases false}]
+    ["snapshots"
+     {:url "https://artifactory.wunderlist.io/artifactory/libs-snapshot-local"
+      :username :env/artifactory_user
+      :password :env/artifactory_password
+      :sign-releases false}]]
+
   :aliases {
     "test" ["midje"]}
   :profiles {
