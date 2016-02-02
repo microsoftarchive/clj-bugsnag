@@ -72,7 +72,9 @@
                                  class-name))
                :severity (or (:severity options) "error")
                :user (:user options)
-               :app {:version (string/trim (:out (sh "git" "rev-parse" "HEAD")))
+               :app {:version (if (contains? options :version)
+                                (:version options)
+                                (string/trim (:out (sh "git" "rev-parse" "HEAD"))))
                      :releaseStage (or (:environment options) "production")}
                :device {:hostname (.. java.net.InetAddress getLocalHost getHostName)}
                :metaData (walk/postwalk stringify (merge base-meta (:meta options)))}]}))
