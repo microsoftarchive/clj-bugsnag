@@ -17,12 +17,12 @@ A fully fledged [Bugsnag](https://bugsnag.com) exception reporting client for Cl
 
 ## Releases and Dependency Information
 
-clj-bugsnag is released via [Clojars](https://clojars.org/clj-bugsnag). The Latest stable release is 0.2.3
+clj-bugsnag is released via [Clojars](https://clojars.org/clj-bugsnag). The Latest stable release is 0.2.5
 
 [Leiningen](https://github.com/technomancy/leiningen) dependency information:
 
 ```clojure
-[clj-bugsnag "0.2.3"]
+[clj-bugsnag "0.2.5"]
 ```
 
 Maven dependency information:
@@ -31,7 +31,7 @@ Maven dependency information:
 <dependency>
   <groupId>clj-bugsnag</groupId>
   <artifactId>clj-bugsnag</artifactId>
-  <version>0.2.3</version>
+  <version>0.2.5</version>
 </dependency>
 ```
 
@@ -51,6 +51,10 @@ Maven dependency information:
    :environment "production"
    ;; Project namespace prefix, used to hide irrelevant stack trace elements
    :project-ns "your-project-ns-prefix"
+   ;; A optional version for your app, this is displayed in bugsnag.
+   ;; If not provided the latest git sha will be used - this means that
+   ;; the git repo is available when you run your app.
+   :version "your-app-version"
    ;; A optional function to extract a user object from a ring request map
    ;; Used to count how many users are affected by a crash
    :user-from-request (constantly {:id "shall return a map"})})
