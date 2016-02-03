@@ -11,18 +11,6 @@
     [org.clojure/data.json "0.2.4"]
     [org.clojure/clojure "1.6.0"]]
 
-  :repositories [
-    ["releases"
-     {:url "https://artifactory.wunderlist.io/artifactory/libs-release-local"
-      :username :env/artifactory_user
-      :password :env/artifactory_password
-      :sign-releases false}]
-    ["snapshots"
-     {:url "https://artifactory.wunderlist.io/artifactory/libs-snapshot-local"
-      :username :env/artifactory_user
-      :password :env/artifactory_password
-      :sign-releases false}]]
-
   :aliases {
     "test" ["midje"]}
   :profiles {
