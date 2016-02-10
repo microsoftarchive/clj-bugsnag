@@ -1,4 +1,4 @@
-(defproject clj-bugsnag "0.2.6"
+(defproject clj-bugsnag "0.2.7"
   :description "Fully fledged Bugsnag client. Supports ex-data and ring middleware."
   :url "https://github.com/wunderlist/clj-bugsnag"
   :license {:name "Eclipse Public License"
@@ -16,4 +16,4 @@
   :profiles {
     :dev {
       :dependencies [[midje "1.6.3"]]
-      :plugins      [[lein-midje "3.1.3"]]}})
+      :plugins      [[lein-midje "3.0.0"]]}})
