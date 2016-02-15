@@ -54,6 +54,9 @@
     thing
     (str thing)))
 
+(defn- environment [options]
+  (:environment options "production"))
+
 (defn exception->json
   [exception options]
   (let [ex (parse-exception exception)
@@ -81,9 +84,13 @@
                :app {:version (if (contains? options :version)
                                 (:version options)
                                 @git-rev)
-                     :releaseStage (or (:environment options) "production")}
+                     :releaseStage (environment options)}
                :device {:hostname (.. java.net.InetAddress getLocalHost getHostName)}
                :metaData (walk/postwalk stringify (merge base-meta (:meta options)))}]}))
+
+(defn should-notify? [{:keys [notify-environments] :as options}]
+  (or (not notify-environments)
+      (notify-environments (environment options))))
 
 (defn notify
   "Main interface for manually reporting exceptions.
@@ -92,7 +99,8 @@
   ([exception]
     (notify exception nil))
   ([exception, options]
-    (let [params (exception->json exception options)
-          url "https://notify.bugsnag.com/"]
-      (http/post url {:form-params params
-                      :content-type :json}))))
+    (when (should-notify? options)
+      (let [params (exception->json exception options)
+            url "https://notify.bugsnag.com/"]
+        (http/post url {:form-params params
+                        :content-type :json})))))
