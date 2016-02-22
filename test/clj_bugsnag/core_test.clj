@@ -46,3 +46,9 @@
   (-> (core/exception->json (ex-info "BOOM" {}) {}) :apiKey) => ..bugsnag-key..
   (provided
     (env :bugsnag-key) => ..bugsnag-key..))
+
+(fact "notifies bugsnag with the appropriate notify-environments"
+  (core/should-notify? nil) => truthy
+  (core/should-notify? {:notify-environments nil}) => truthy
+  (core/should-notify? {:notify-environments #{"development"} :environment "development"}) => truthy
+  (core/should-notify? {:notify-environments #{"production"} :environment "development"}) => falsey)

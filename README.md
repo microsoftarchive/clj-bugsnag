@@ -49,6 +49,9 @@ Maven dependency information:
   {:api-key "Project API key"
    ;; Defaults to "production"
    :environment "production"
+   ;; A set of environments to notify bugsnag in
+   ;; Defaults to notifying in all environments
+   :notify-environments #{"production" "staging"}
    ;; Project namespace prefix, used to hide irrelevant stack trace elements
    :project-ns "your-project-ns-prefix"
    ;; A optional version for your app, this is displayed in bugsnag.
