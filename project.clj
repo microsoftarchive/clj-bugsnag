@@ -8,6 +8,7 @@
     [org.clojure/clojure "1.6.0"]
     [clj-stacktrace "0.2.8"]
     [clj-http "2.0.0"]
+    [cheshire "5.5.0"]
     [environ "1.0.2"]
     [org.clojure/data.json "0.2.6"]]
 
