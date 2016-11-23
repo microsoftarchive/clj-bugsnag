@@ -46,3 +46,10 @@
   (-> (core/exception->json (ex-info "BOOM" {}) {}) :apiKey) => ..bugsnag-key..
   (provided
     (env :bugsnag-key) => ..bugsnag-key..))
+
+(fact "includes nested exceptions"
+  (let [e1 (Exception. "Inner")
+        e2 (Exception. "Middle" e1)
+        e3 (Exception. "Outer"  e2)]
+    (->> (core/exception->json e3 {}) :events first :exceptions (map :message))
+  => ["Inner" "Middle" "Outer"]))
