@@ -54,12 +54,24 @@
     thing
     (str thing)))
 
+(defn- unroll [ex project-ns]
+  (loop [collected []
+         current ex]
+    (let [class-name (.getName (:class current))
+          stacktrace (transform-stacktrace (:trace-elems current) project-ns)
+          new-item {:errorClass class-name
+                    :message (:message current)
+                    :stacktrace stacktrace}
+          collected (cons new-item collected)]
+      (if-let [next (:cause current)]
+        (recur collected next)
+        collected))))
+
 (defn exception->json
   [exception options]
   (let [ex (parse-exception exception)
         class-name (.getName (:class ex))
         project-ns (get options :project-ns "\000")
-        stacktrace (transform-stacktrace (:trace-elems ex) project-ns)
         base-meta (if-let [d (ex-data exception)]
                     {"ex–data" d}
                     {})]
@@ -68,9 +80,7 @@
                 :version "0.2.2"
                 :url "https://github.com/wunderlist/clj-bugsnag"}
      :events [{:payloadVersion "2"
-               :exceptions [{:errorClass class-name
-                             :message (:message ex)
-                             :stacktrace stacktrace}]
+               :exceptions (unroll ex project-ns)
                :context (:context options)
                :groupingHash (or (:group options)
                                (if (isa? (type exception) clojure.lang.ExceptionInfo)
