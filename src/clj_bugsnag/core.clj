@@ -55,14 +55,17 @@
     (str thing)))
 
 (defn- unroll [ex project-ns]
-  (let [class-name (.getName (:class ex))
-        stacktrace (transform-stacktrace (:trace-elems ex) project-ns)
-        current {:errorClass class-name
-                 :message (:message ex)
-                 :stacktrace stacktrace}]
-    (if-let [next (:cause ex)]
-      (conj (unroll next project-ns) current)
-      [current])))
+  (loop [collected []
+         current ex]
+    (let [class-name (.getName (:class current))
+          stacktrace (transform-stacktrace (:trace-elems current) project-ns)
+          new-item {:errorClass class-name
+                    :message (:message current)
+                    :stacktrace stacktrace}
+          collected (cons new-item collected)]
+      (if-let [next (:cause current)]
+        (recur collected next)
+        collected))))
 
 (defn exception->json
   [exception options]
