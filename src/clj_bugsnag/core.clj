@@ -33,10 +33,10 @@
   [trace-elems project-ns]
   (try
     (vec (for [{:keys [file line ns] :as elem} trace-elems
-               :let [project? (.startsWith (or ns "_") project-ns)
+               :let [project? (string/starts-with? (or ns "_") project-ns)
                      method (method-str elem)
-                     code (when (.endsWith (or file "") ".clj")
-                            (find-source-snippet line (.replace (or method "") "[fn]" "")))]]
+                     code (when (string/ends-with? (or file "") ".clj")
+                            (find-source-snippet line (string/replace (or method "") "[fn]" "")))]]
             {:file file,
              :lineNumber line,
              :method method,
@@ -57,7 +57,7 @@
 (defn exception->json
   [exception options]
   (let [ex (parse-exception exception)
-        class-name (.getName (:class ex))
+        class-name (.getName ^Class (:class ex))
         project-ns (get options :project-ns "\000")
         stacktrace (transform-stacktrace (:trace-elems ex) project-ns)
         base-meta (if-let [d (ex-data exception)]
